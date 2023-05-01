@@ -1,0 +1,6 @@
+{
+    "port": 3000,
+    "jwtSecret": "UE7ErFZo1ngNBAKN3Z8Mlm9wx2uivQ1v",
+    "apiSecret": "3bo3V0HvVMCMK4e8V2K6o3JF1M0ulKhx",
+    "mongoUri": "mongodb+srv://dopemail228:QGVlECx1QekAlNPg@cluster0.qskh6cd.mongodb.net/?retryWrites=true&w=majority"
+}
