@@ -2,39 +2,47 @@ const {Router} = require('express')
 const { auth, makeAccess, takeAccess } = require('../middlware/access.middleware')
 const Order = require('../controllers/order.controller')
 const trappiner = require('../trappiner')
+const { check } = require('express-validator')
+
 
 const router = Router()
 
-router.post('/create', auth, makeAccess, trappiner(async (req, res) => {
-    const { maker, card, value } = req.body
-    
-    const id = await Order.create(req.accessId, maker, card, value)
+router.post('/create', auth, makeAccess,
+    [
+        check('card', 'badCardNumber').isCreditCard(),
+        check('currency', 'wrongData').isString(),
+    ],    
+    trappiner(async (req, res) => {
+        const { maker, card, value, currency } = req.body
+        
+        const id = await Order.create(req.accessId, maker, card, value, currency)
 
-    res.status(201).json({ id })
-}))
+        res.status(201).json({ id })
+    })
+)
 
 router.post('/take', auth, takeAccess, trappiner(async (req, res) => {
     const { order, taker } = req.body
         
-    const status = await Order.take(req.accessId, order, taker)
+    const orderData = await Order.take(req.accessId, order, taker)
 
-    res.status(200).json({ status })
+    res.status(200).json(orderData)
 }))
 
 router.post('/confirm', auth, takeAccess, trappiner(async (req, res) => {
     const { order } = req.body
         
-    const status = await Order.confirm(req.accessId, order)
+    const orderData = await Order.confirm(req.accessId, order)
 
-    res.status(200).json({ status })
+    res.status(200).json(orderData)
 }))
 
 router.post('/reject', auth, takeAccess, trappiner(async (req, res) => {
     const { order } = req.body
         
-    const status = await Order.reject(req.accessId, order)
+    const orderData = await Order.reject(req.accessId, order)
 
-    res.status(200).json({ status })
+    res.status(200).json(orderData)
 }))
 
 

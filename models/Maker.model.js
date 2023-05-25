@@ -4,10 +4,12 @@ const schema = new Schema({
     accessId: {type: String},
     name: {type: String},
     balance: {
-        usdt: {type: Number, default: 0}
+        usdt: {type: Number, default: 0},
+        uah: {type: Number, default: 0}
     },
     recive: {
-        usdt: {type: Number, default: 0}
+        usdt: {type: Number, default: 0},
+        uah: {type: Number, default: 0}
     }
 })
 

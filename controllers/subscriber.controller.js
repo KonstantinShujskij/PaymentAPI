@@ -25,7 +25,11 @@ const on = async (accessId, url) => {
 const pull = (url, body) => {
     const options = { url, headers: { "content-type": "application/json" }, body, json: true }
 
-    request.post(options, (err, res, body) => { console.log(err) })
+    request.post(options, (err, res, body) => { 
+        if(err) {
+            // Alert!
+        }
+    })
 }
 
 const getAccessList = async (action) => {
@@ -41,6 +45,18 @@ const getAccessList = async (action) => {
 
         const taker = await Taker.findOne({ _id: order.taker })
         list.add(taker.accessId.toString())
+
+        return list
+    }
+
+    if(action.type === orderTypes.CREATE) { 
+        const secret = config.get('jwtSecret')
+        const accessList = await Access.find()
+
+        accessList.forEach((access) => {
+            const decoded = jwt.verify(access.accessToken, secret)
+            if(decoded.accessList?.take) { list.add(access._id.toString()) } 
+        })
 
         return list
     }

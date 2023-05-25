@@ -13,7 +13,10 @@ async function create(accessId, name) {
 
     await dispatch(accessId, actions.create(taker))
 
-    return taker._id
+    return { 
+        id: taker._id,
+        name: taker.name
+    }
 }
 
 async function get(accessId, takerId) {

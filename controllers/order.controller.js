@@ -6,6 +6,8 @@ const dispatch = require('../manager/dispatch')
 const actions = require('../manager/actions/order.actions')
 const errors = require('../errors')
 
+const MakerModel = require('../models/Maker.model')
+const TakerModel = require('../models/Taker.model')
 
 const status = {
     CREATE: 'CREATE',
@@ -14,16 +16,18 @@ const status = {
     REJECT: 'REJECT'
 }
 
-async function create(accessId, makerId, card, value) {
+async function create(accessId, makerId, card, value, currency) {
     const access = await Access.findOne({ _id: accessId })
     const course = access.course
 
-    await Maker.withdraw(accessId, makerId, value, course)
+    if(access.min > value || value > access.max) { throw errors.invalidValue }
 
-    const order = new Order({ maker: makerId, card, value, course })
+    await Maker.withdraw(accessId, makerId, value, course, currency)
+
+    const order = new Order({ accessId, maker: makerId, card, value, course, currency })
     await order.save()
 
-    await dispatch(accessId, actions.update(order))
+    await dispatch(accessId, actions.create(order))
 
     return order._id
 }
@@ -42,7 +46,14 @@ async function take(accessId, orderId, takerId) {
 
     await dispatch(accessId, actions.update(order))
 
-    return order.status
+    return { 
+        id: order._id,
+        status: order.status,
+        value: order.value,
+        card: order.card,
+        create: order.createdAt,
+        update: order.updatedAt
+    }
 }
 
 async function closeOrder(accessId, orderId, closeStatus) {
@@ -65,7 +76,14 @@ async function confirm(accessId, orderId) {
 
     await Maker.remove(order)
 
-    return order.status
+    return { 
+        id: order._id,
+        status: order.status,
+        value: order.value,
+        card: order.card,
+        create: order.createdAt,
+        update: order.updatedAt
+    }
 }
 
 async function reject(accessId, orderId) {
@@ -73,20 +91,29 @@ async function reject(accessId, orderId) {
 
     await Maker.recive(order)
 
-    return order.status
+    return { 
+        id: order._id,
+        status: order.status,
+        value: order.value,
+        card: order.card,
+        create: order.createdAt,
+        update: order.updatedAt
+    }
 }
 
 async function get(accessId, orderId) {
     const order = await Order.findOne({ _id: orderId })
     if(!order) { throw errors.notFind }
 
-    await Maker.get(accessId, order.maker)
+    //await Maker.get(accessId, order.maker)
 
     return {
         id: order._id,
         status: order.status,
         value: order.value,
-        card: order.card
+        card: order.card,
+        create: order.createdAt,
+        update: order.updatedAt
     }
 }
 
@@ -134,6 +161,42 @@ async function takerList(accessId, takerId) {
     return list
 }
 
+// Admins 
+
+async function listAll(startTime, stopTime, accessId=false) {
+    const option = { createdAt: { $gt: startTime, $lt: stopTime } }
+    if(accessId) { option.accessId = accessId }
+
+    const orders = await Order.find(option)
+
+    const list = []
+
+    for(let i in orders) {
+        const order = orders[i]
+        const maker = await MakerModel.findOne({ _id: order.maker })
+        const taker = await TakerModel.findOne({ _id: order.taker })
+        const access = await Access.findOne({ _id: maker.accessId })
+
+        list.push({
+            id: order._id,
+            status: order.status,
+            value: order.value,
+            card: order.card,
+            course: order.course,
+            currency: order.currency,
+            access: access._id,
+            partner: access.name,
+            maker: maker.name,
+            taker: taker? taker.name : false,
+            create: order.createdAt,
+            update: order.updatedAt       
+        })
+    }
+
+    return list
+}
+
+
 module.exports = { 
     create, 
     take,
@@ -143,5 +206,8 @@ module.exports = {
     list,
     makerList,
     takerList,
+
+    listAll,
+
     status
 }

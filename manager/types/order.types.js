@@ -1,3 +1,4 @@
 module.exports = {
-    UPDATE: 'ORDER UPDATE', // order/update
+    CREATE: 'ORDER CREATE',
+    UPDATE: 'ORDER UPDATE',
 }
