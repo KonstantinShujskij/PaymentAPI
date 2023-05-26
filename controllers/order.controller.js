@@ -112,6 +112,7 @@ async function get(accessId, orderId) {
         status: order.status,
         value: order.value,
         card: order.card,
+        currency: order.currency, 
         create: order.createdAt,
         update: order.updatedAt
     }
@@ -140,7 +141,10 @@ async function makerList(accessId, makerId) {
         id: order._id,
         status: order.status,
         value: order.value,
-        card: order.card
+        card: order.card,
+        currency: order.currency, 
+        create: order.createdAt,
+        update: order.updatedAt
     }))
 
     return list
