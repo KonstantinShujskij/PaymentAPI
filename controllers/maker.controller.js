@@ -75,7 +75,7 @@ async function withdraw(accessId, makerId, value, course, currency) {
     if(!maker) { throw errors.userNotExist }
     if(!accessId.equals(maker.accessId)) { throw errors.notAccess }
 
-    if(!maker.balance[currency]) { throw errors.invalidCurrency }
+    if(maker.balance[currency] === undefined) { throw errors.invalidCurrency }
 
     if(currency === 'usdt') { 
         const usdt = value / course

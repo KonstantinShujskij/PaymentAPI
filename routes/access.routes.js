@@ -10,9 +10,9 @@ const router = Router()
 router.post('/create', auth, adminAccess,
     [ 
         check('name', 'wrongData').isString(),
-        check('course', 'wrongData').isFloat({ min: 0 }),
-        check('min', 'wrongData').isFloat({ min: 0 }),
-        check('max', 'wrongData').isFloat({ min: 0 }),
+        check('course', 'wrongData').optional().isFloat({ min: 0 }),
+        check('min', 'wrongData').optional().isFloat({ min: 0 }),
+        check('max', 'wrongData').optional().isFloat({ min: 0 }),
     ],
     trappiner(async (req, res) => {
         const { name, course, min, max, access } = req.body
