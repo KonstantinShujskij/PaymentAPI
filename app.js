@@ -15,7 +15,7 @@ app.use('/api/order', require('./routes/order.routes'))
 app.use('/api/subscribe', require('./routes/subscriber.route'))
 app.use('/api/admin', require('./routes/admin.routes'))
 
-
+//"mongoUri": "mongodb+srv://ncapi:7k9fHS3OM3PErhed@ncapi1.xrfahnk.mongodb.net/?retryWrites=true&w=majority"
 
 async function start() {
     try {

@@ -10,13 +10,13 @@ const create = (maker) => {
     }
 }
 
-const refil = (maker) => {
+const refil = (maker, balance) => {
     return {
         type: types.REFIL,
         payload: {
             id: maker._id,
             name: maker.name,
-            balance: maker.balance
+            balance
         }
     }
 }

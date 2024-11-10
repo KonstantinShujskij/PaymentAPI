@@ -90,6 +90,7 @@ async function getPartners() {
 
     accessList.forEach((access) => {
         const decoded = jwt.verify(access.accessToken, secret)
+
         if(decoded.accessList?.make) { 
             partners.push({
                 id: access._id,

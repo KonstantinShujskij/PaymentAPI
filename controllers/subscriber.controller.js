@@ -7,6 +7,7 @@ const Taker = require('../models/Taker.model')
 const Order = require('../models/Order.model')
 
 const orderTypes = require('../manager/types/order.types')
+const accessTypes = require('../manager/types/access.types')
 
 const jwt = require('jsonwebtoken')
 const config = require('config')
@@ -25,7 +26,14 @@ const on = async (accessId, url) => {
 const pull = (url, body) => {
     const options = { url, headers: { "content-type": "application/json" }, body, json: true }
 
-    request.post(options, (err, res, body) => { 
+    request.post(options, (err, res, _body) => { 
+
+        if(res.statusCode !== 200) {
+            setTimeout(() => {
+                pull(url, body)
+            }, 1000 + parseInt(Math.random() * 1000))
+        }
+
         if(err) {
             // Alert!
         }
@@ -61,10 +69,18 @@ const getAccessList = async (action) => {
         return list
     }
 
+    if(action.type === accessTypes.SET_COURSE) { 
+        list.add(action.payload.id.toString())
+
+        return list
+    }
+
     return list
 }
 
 const listen = async (action) => {
+    return
+
     const list = await Subscriber.find()
     const accessList = await getAccessList(action)
 

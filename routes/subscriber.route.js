@@ -11,6 +11,7 @@ router.post('/on', auth,
         check('url', 'badUrl').isURL({require_protocol: true}),
     ],
     trappiner(async (req, res) => {
+        console.log('lox');
         const { url } = req.body
 
         const subscribe = await on(req.accessId, url)

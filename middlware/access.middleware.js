@@ -8,7 +8,7 @@ const config = require('config')
 
 const auth = middleware(async (req, res) => {
     const { accessToken, signature } = req.body
-
+    
     const secret = config.get('jwtSecret')
     const apiSecret = config.get('apiSecret')
 

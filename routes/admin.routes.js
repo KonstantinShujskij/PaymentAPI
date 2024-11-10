@@ -47,5 +47,12 @@ router.post('/get-makers', auth, adminAccess, trappiner(async (req, res) => {
     res.status(200).json(list)
 }))
 
+router.post('/rebalance', auth, adminAccess, trappiner(async (req, res) => {
+    const { maker } = req.body
+    
+    const resault = await Maker.rebalance(maker)
+
+    res.status(200).json(resault)
+}))
 
 module.exports = router
