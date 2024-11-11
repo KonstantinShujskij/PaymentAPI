@@ -7,6 +7,9 @@ module.exports = {
     lowBalance: { answer: { error: 'Low Balance' }, custom: true },
     invalidValue: { answer: { error: 'Low or hight value' }, custom: true },
     invalidCurrency: { answer: { error: 'Invalid Currency' }, custom: true },
+    incorectNumber: { answer: { error: 'Incorect Card Number' }, custom: true },
+    incorectIban: { answer: { error: 'Incorect Iban' }, custom: true },
+    incorectINN: { answer: { error: 'Incorect INN' }, custom: true },
 
     notCanTake: { answer: { error: 'Not Can Take' }, custom: true },
     OrderNotWait: { answer: { error: 'Order In Not Processing' }, custom: true },
