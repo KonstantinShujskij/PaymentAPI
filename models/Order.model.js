@@ -9,6 +9,12 @@ const schema = new Schema({
     course: {type: Number},
     currency: {type: String},
     status: {type: String, default: "CREATE"},
+    iban: {
+        number: {type: String, default: ''},
+        INN: {type: String, default: ''},
+        target: {type: String, default: ''},
+        recipient: {type: String, default: ''}
+    },
 
     createdAt: {type: Number},
     updatedAt: {type: Number}

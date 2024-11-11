@@ -3,19 +3,33 @@ const { auth, makeAccess, takeAccess } = require('../middlware/access.middleware
 const Order = require('../controllers/order.controller')
 const trappiner = require('../trappiner')
 const { check } = require('express-validator')
+const errors = require('../errors')
 
 
 const router = Router()
 
+
 router.post('/create', auth, makeAccess,
     [
-        check('card', 'badCardNumber').isCreditCard(),
+        check('card', 'badCardNumber').optional().isCreditCard(),
         check('currency', 'wrongData').isString(),
+
+        check('iban', 'incorectIban').optional().isObject(),
+        check('iban.number', 'incorectIban').if(check('iban').exists()).isIBAN(),
+        check('iban.INN', 'incorectINN').if(check('iban').exists()).isString().notEmpty(),
+        check('iban.recipient', 'incorectValue').if(check('iban').exists()).isString().notEmpty(),
     ],    
     trappiner(async (req, res) => {
-        const { maker, card, value, currency } = req.body
+        const { maker, value, currency, iban } = req.body
+        let { card } = req.body
         
-        const id = await Order.create(req.accessId, maker, card, value, currency)
+        if(!card) {
+            if(iban) { card = '4111111111111111' } 
+            else { throw errors.incorectNumber  }
+        }   
+        if(iban) { iban.target = 'Переказ коштів' }        
+
+        const id = await Order.create(req.accessId, maker, card, value, currency, iban)
 
         res.status(201).json({ id })
     })

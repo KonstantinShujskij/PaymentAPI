@@ -58,7 +58,7 @@ async function list(accessId) {
 
 // Balance Logic
 
-async function refil(accessId, makerId, value={ usdt: 0, uah: 0 }) {
+async function refil(accessId, makerId, value={ usdt: 0, uah: 0 }) {   
     const maker = await Maker.findOne({ _id: makerId })    
     if(!maker) { throw errors.userNotExist }
 
